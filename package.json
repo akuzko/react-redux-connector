@@ -1,0 +1,26 @@
+{
+  "name": "react-redux-connector",
+  "version": "1.0.0",
+  "description": "Connector component to hoist all Redux-related logic of your app",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akuzko/react-redux-connector.git"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "redux",
+    "react-redux"
+  ],
+  "author": "Artem Kuzko <a.kuzko@gmail.com> (https://github.com/akuzko)",
+  "license": "MIT",
+  "homepage": "https://github.com/akuzko/react-redux-connector",
+  "devDependencies": {
+    "react": "^15.3.2",
+    "redux": "^3.6.0"
+  }
+}
