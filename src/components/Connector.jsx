@@ -14,6 +14,10 @@ export default class Connector extends Component {
     this.__generateDispatchers(actionNames);
 
     return function(state = initialState, action) {
+      if (action.type === `${namespace}/$reset`) {
+        return initialState;
+      }
+
       const [actionNamespace, actionType] = action.type.split('/');
 
       if (actionNamespace === namespace) {
@@ -41,12 +45,6 @@ export default class Connector extends Component {
 
   static action(name) {
     return `${this.$namespace}/${name}`;
-  }
-
-  static get displayName() {
-    const viewName = this.$connection.displayName || this.$connection.name || 'Component';
-
-    return `Connector(${viewName})`;
   }
 
   static contextTypes = {
