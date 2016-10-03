@@ -10,7 +10,12 @@ import storeShape from '../utils/storeShape';
 export default class Reductor extends Component {
   static propTypes = {
     createStore: PropTypes.func.isRequired,
-    children: PropTypes.element.isRequired
+    connectorProp: PropTypes.string,
+    children: PropTypes.node.isRequired
+  };
+
+  static defaultProps = {
+    connectorProp: 'component'
   };
 
   static childContextTypes = {
@@ -30,8 +35,8 @@ export default class Reductor extends Component {
   getConnectors(childrenToProcess = this.props.children) {
     const tmp = Children.map(childrenToProcess, (child) => {
       const connectors = [];
-      const { component, children } = child.props;
-      if (component && component.$namespace) {
+      const { [this.props.connectorProp]: component, children } = (child.props || {});
+      if (component && component.$reducer) {
         connectors.push(component);
       }
       if (children) {
@@ -45,7 +50,7 @@ export default class Reductor extends Component {
   }
 
   getReducer() {
-    const connectors = groupBy(this.getConnectors().filter(c => c.$reducer), '$namespace');
+    const connectors = groupBy(this.getConnectors(), '$namespace');
 
     return function(state = {}, action) {
       const newState = {};
@@ -61,6 +66,6 @@ export default class Reductor extends Component {
   }
 
   render() {
-    return this.props.children;
+    return <div>{ this.props.children }</div>;
   }
 }
