@@ -7,21 +7,21 @@ import expect from 'expect';
 describe('<Connection />', function() {
   class TestConnection extends Connection {
     load() {
-      return this.$load([1, 2, 3])
+      return this.$load([1, 2, 3]);
     }
     render() {
-      return <div className="connection" onClick={() => this.load()} />
+      return <div className="connection" onClick={() => this.load()} />;
     }
   }
 
   class TestConnector extends Connector {
     static $connection = TestConnection;
     static $state = []
-    static $reducer = TestConnector.reduce('foo', (state) => ({
+    static $reducer = TestConnector.reduce('foo', () => ({
       $receive: (items) => items
     }));
-    $expose($state) { return { items: $state } }
-    $load(items) { return this.$$receive(items) }
+    $expose($state) { return { items: $state }; }
+    $load(items) { return this.$$receive(items); }
   }
 
   it('has event-handler methods (that start with $) provided by Connector', function() {

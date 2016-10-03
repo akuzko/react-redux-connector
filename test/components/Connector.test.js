@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { createStore } from 'redux';
 import { Connector } from '../../src';
 import storeShape from '../../src/utils/storeShape';
 import { shallow, mount } from 'enzyme';
-import expect, { createSpy, spyOn } from 'expect';
+import expect, { spyOn } from 'expect';
 
 describe('Connector', function() {
   describe('.reduce', function() {
@@ -62,12 +62,13 @@ describe('Connector', function() {
 describe('<Connector />', function() {
   const store = createStore(state => state);
   const Provider = React.createClass({
+    propTypes: { children: PropTypes.node },
     childContextTypes: { store: storeShape },
-    getChildContext() { return { store } },
-    render() { return this.props.children }
+    getChildContext() { return { store }; },
+    render() { return this.props.children; }
   });
   class Connection extends React.Component {
-    render() { return <div className="connection" /> }
+    render() { return <div className="connection" />; }
   }
 
   describe('initialization', function() {
@@ -76,7 +77,7 @@ describe('<Connector />', function() {
     }
 
     it('throws an error if store is undefined', function() {
-      expect(function(){ shallow(<TestConnector />) })
+      expect(function(){ shallow(<TestConnector />); })
         .toThrow('TestConnector instance expects store object in props or in context');
     });
 
@@ -87,7 +88,7 @@ describe('<Connector />', function() {
 
     it('accepts store from context', function() {
       let instance = null;
-      const wrapper = mount(<Provider><TestConnector ref={(inst) => instance = inst} /></Provider>);
+      mount(<Provider><TestConnector ref={(inst) => instance = inst} /></Provider>);
       expect(instance.store).toBe(store);
     });
   });
@@ -193,12 +194,12 @@ describe('<Connector />', function() {
       class TestConnector extends Connector {
         static $connection = Connection;
         static $state = [];
-        static $reducer = TestConnector.reduce('foo', (state) => ({}));
+        static $reducer = TestConnector.reduce('foo', () => ({}));
       }
 
       it('throws an error', function() {
         const store = createStore(TestConnector.$reducer);
-        expect(function() { mount(<TestConnector store={store} />) })
+        expect(function() { mount(<TestConnector store={store} />); })
           .toThrow('TestConnector.$state should be a plain object' +
             'or there should be a $expose instance method defined that returns a plain object'
           );
@@ -209,13 +210,13 @@ describe('<Connector />', function() {
       class TestConnector extends Connector {
         static $connection = Connection;
         static $state = { items: [] };
-        static $reducer = TestConnector.reduce('foo', (state) => ({}));
-        $expose($state) { return $state.items }
+        static $reducer = TestConnector.reduce('foo', () => ({}));
+        $expose($state) { return $state.items; }
       }
 
       it('throws an error', function() {
         const store = createStore(TestConnector.$reducer);
-        expect(function() { mount(<TestConnector store={store} />) })
+        expect(function() { mount(<TestConnector store={store} />); })
           .toThrow('TestConnector.$state should be a plain object' +
             'or there should be a $expose instance method defined that returns a plain object'
           );
@@ -310,7 +311,7 @@ describe('<Connector />', function() {
     it('throws an error when no connection is specified', function() {
       class BadConnector extends Connector {}
 
-      expect(function(){ mount(<BadConnector store={store} />) })
+      expect(function(){ mount(<BadConnector store={store} />); })
         .toThrow('BadConnector should define a $connection class property');
     });
 
