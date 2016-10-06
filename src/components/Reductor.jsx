@@ -10,11 +10,13 @@ import storeShape from '../utils/storeShape';
 export default class Reductor extends Component {
   static propTypes = {
     createStore: PropTypes.func.isRequired,
+    connectors: PropTypes.arrayOf(PropTypes.func),
     connectorProp: PropTypes.string,
     children: PropTypes.node.isRequired
   };
 
   static defaultProps = {
+    connectors: [],
     connectorProp: 'component'
   };
 
@@ -32,7 +34,7 @@ export default class Reductor extends Component {
     this.store = this.props.createStore(reducer);
   }
 
-  getConnectors(childrenToProcess = this.props.children) {
+  getChildrenConnectors(childrenToProcess = this.props.children) {
     const tmp = Children.map(childrenToProcess, (child) => {
       const connectors = [];
       const { [this.props.connectorProp]: component, children } = (child.props || {});
@@ -40,7 +42,7 @@ export default class Reductor extends Component {
         connectors.push(component);
       }
       if (children) {
-        connectors.push(...this.getConnectors(children));
+        connectors.push(...this.getChildrenConnectors(children));
       }
       // weird thing: for some reason, when array is returned (i.e. return connectors),
       // React abandons all elements in it.
@@ -50,7 +52,8 @@ export default class Reductor extends Component {
   }
 
   getReducer() {
-    const connectors = groupBy(this.getConnectors(), '$namespace');
+    const allConnectors = [...this.props.connectors, ...this.getChildrenConnectors()];
+    const connectors = groupBy(allConnectors, '$namespace');
 
     return function(state = {}, action) {
       const newState = {};

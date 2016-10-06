@@ -25,6 +25,14 @@ describe('<Reductor />', function() {
     }));
   }
 
+  class BazConnector extends Connector {
+    static $connection = TestConnection;
+    static $state = {};
+    static $reducer = BazConnector.reduce('common.baz', (state) => ({
+      $set: (key, value) => ({ ...state, [key]: value })
+    }));
+  }
+
   class MockRoute extends Component {
     static propTypes = {
       komponent: PropTypes.func
@@ -38,7 +46,7 @@ describe('<Reductor />', function() {
 
   beforeEach(function() {
     this.wrapper = mount(
-      <Reductor createStore={createStore} connectorProp="komponent">
+      <Reductor createStore={createStore} connectors={[BazConnector]} connectorProp="komponent">
         <MockRoute komponent={FooConnector} />
         <div className="deeply-nested-connector">
           <MockRoute komponent={BarConnector} />
@@ -53,12 +61,16 @@ describe('<Reductor />', function() {
     expect(this.wrapper.contains(<div>some content</div>)).toBe(true);
   });
 
-  it('generates a reducer function based on child connectors and creates a store based on it', function() {
-    expect(this.store.getState()).toEqual({ common: { foo: {}, bar: {} } });
+  it('generates a reducer function based on props and child connectors and creates a store based on it', function() {
+    expect(this.store.getState()).toEqual({ common: { foo: {}, bar: {}, baz: {} } });
 
     this.store.dispatch({ type: 'common.foo/$set', args: ['text', 'A Text'] });
 
-    expect(this.store.getState()).toEqual({ common: { foo: { text: 'A Text' }, bar: {} } });
+    expect(this.store.getState()).toEqual({ common: { foo: { text: 'A Text' }, bar: {}, baz: {} } });
     expect(this.wrapper.contains(<div>A Text</div>)).toBe(true);
+
+    this.store.dispatch({ type: 'common.baz/$set', args: ['text', 'Not mounted'] });
+
+    expect(this.store.getState()).toEqual({ common: { foo: { text: 'A Text' }, bar: {}, baz: { text: 'Not mounted' } } });
   });
 });
