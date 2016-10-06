@@ -1,7 +1,7 @@
 {
   "name": "react-redux-connector",
   "version": "1.0.0",
-  "description": "Connector component to hoist all Redux-related logic of your app",
+  "description": "Object-oriented React binding for Redux",
   "main": "./lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
