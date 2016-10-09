@@ -128,6 +128,20 @@ export default class TodosConnector extends Connector {
 }
 ```
 
+#### External actions dispatching
+
+If there is a need to dispatch an action of other Connector, i.e. from other namespace,
+that can be done using `#dispatch` and `.action` methods, like so:
+
+```js
+// somewhere in TodosConnector.jsx
+
+$createTodo(todo) {
+  return post('/todos', { todo })
+    .then(() => this.dispatch(ToolbarConnector.action('incrementTodosCount')));
+}
+```
+
 ### Connection
 
 Connection is a very simple helper object that you should inherit from instead of
