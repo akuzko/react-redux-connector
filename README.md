@@ -3,6 +3,9 @@ React Redux Connector
 
 Object-oriented React bindings for [Redux](https://github.com/reactjs/redux).
 
+[![build status](https://img.shields.io/travis/akuzko/react-redux-connector/master.svg?style=flat-square)](https://travis-ci.org/akuzko/react-redux-connector)
+[![npm version](https://img.shields.io/npm/v/react-redux-connector.svg?style=flat-square)](https://www.npmjs.com/package/react-redux-connector)
+
 ## Installation
 
 ```
@@ -90,7 +93,7 @@ connection components.
 ```js
 import { Connector } from 'react-redux-connector';
 import Todos from './Todos';
-import { get, post, put, destroy } from 'utils';
+import { get, post, put, destroy } from 'your-requests-lib';
 
 export default class TodosConnector extends Connector {
   static $connection = Todos;
@@ -225,18 +228,18 @@ routes.
 import { Reductor } from 'react-redux-connector';
 import { createStore } from 'redux';
 
-// bellow are Connector components imported
-import Profile from 'application/profile';
-import { Todos, TodoDetails } from 'application/todos';
+import Profile from 'application/ProfileConnector';
+import Todos from 'application/todos/TodosCollector';
+import TodoDetails from 'application/todos/TodoDetailsConnector';
 
-export default class Routes extends Component {
+export default class App extends Component {
   return (
     <Reductor createStore={createStore}>
       <Router history={history}>
         <IndexRedirect to="/profile" />
         <Route path="/profile" component={Profile} />
         <Route path="/todos" component={Todos} />
-        <Route path="/todos/:id" component={Todos} />
+        <Route path="/todos/:id" component={TodoDetails} />
       </Router>
     </Reductor>
   );
